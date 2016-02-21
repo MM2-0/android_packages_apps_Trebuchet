@@ -162,9 +162,8 @@ public class Launcher extends Activity
 
     public static final int REQUEST_OPEN_PROTECTED_FOLDER = 14;
     public static final int REQUEST_PROTECT_FOLDER = 15;
-    public static final int REQUEST_UNPROTECT_FOLDER = 16;
+    public static final int REQUEST_UNPROTECT_FOLDER = 1;
 
-    private static final int WORKSPACE_BACKGROUND_GRADIENT = 0;
     private static final int WORKSPACE_BACKGROUND_TRANSPARENT = 1;
     private static final int WORKSPACE_BACKGROUND_BLACK = 2;
 
@@ -1132,8 +1131,7 @@ public class Launcher extends Activity
         mOnResumeState = State.NONE;
 
         // Background was set to gradient in onPause(), restore to transparent if in all apps.
-        setWorkspaceBackground(mState == State.WORKSPACE ? WORKSPACE_BACKGROUND_GRADIENT
-                : WORKSPACE_BACKGROUND_TRANSPARENT);
+        setWorkspaceBackground(WORKSPACE_BACKGROUND_TRANSPARENT);
 
         mPaused = false;
         if (mRestoring || mOnResumeNeedsLoad) {
@@ -2820,8 +2818,7 @@ public class Launcher extends Activity
             else {
                 showWorkspace(true);
                 // Background was set to gradient in onPause(), restore to black if in all apps.
-                setWorkspaceBackground(mState == State.WORKSPACE ? WORKSPACE_BACKGROUND_GRADIENT
-                        : WORKSPACE_BACKGROUND_TRANSPARENT);
+                setWorkspaceBackground(WORKSPACE_BACKGROUND_TRANSPARENT);
             }
         } else if (mWorkspace.getOpenFolder() != null) {
             Folder openFolder = mWorkspace.getOpenFolder();
@@ -3731,7 +3728,7 @@ public class Launcher extends Activity
         if (wpflags != curflags) {
             getWindow().setFlags(wpflags, WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER);
         }
-        setWorkspaceBackground(visible ? WORKSPACE_BACKGROUND_GRADIENT : WORKSPACE_BACKGROUND_BLACK);
+        setWorkspaceBackground(visible ? WORKSPACE_BACKGROUND_TRANSPARENT : WORKSPACE_BACKGROUND_BLACK);
     }
 
     @Override
@@ -3783,7 +3780,7 @@ public class Launcher extends Activity
 
         // Change the state *after* we've called all the transition code
         mState = State.WORKSPACE;
-        setWorkspaceBackground(mState == State.WORKSPACE ? WORKSPACE_BACKGROUND_GRADIENT
+        setWorkspaceBackground(mState == State.WORKSPACE ? WORKSPACE_BACKGROUND_TRANSPARENT
                 : WORKSPACE_BACKGROUND_TRANSPARENT);
 
         // Resume the auto-advance of widgets

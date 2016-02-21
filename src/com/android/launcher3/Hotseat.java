@@ -135,7 +135,7 @@ public class Hotseat extends FrameLayout
         int x = getCellXFromOrder(mAllAppsButtonRank);
         int y = getCellYFromOrder(mAllAppsButtonRank);
         CellLayout.LayoutParams lp = new CellLayout.LayoutParams(x,y,1,1);
-        lp.canReorder = false;
+        lp.canReorder = true;
         mContent.addViewToCellLayout(allAppsButton, -1, allAppsButton.getId(), lp, true);
     }
 

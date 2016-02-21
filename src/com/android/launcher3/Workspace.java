@@ -40,6 +40,10 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.Region.Op;
 import android.graphics.drawable.Drawable;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -296,6 +300,25 @@ public class Workspace extends PagedView
 
     private boolean mHideIconLabels;
 
+    private SensorManager mSensorManager;
+    private SensorEventListener mSensorEventListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent sensorEvent) {
+            float x = sensorEvent.values[0];
+            Log.d("Trebuchet", "" + x);
+            if (x < -3 && mCurrentPage < getPageCount() - 1) {
+                snapToPage(mCurrentPage + 1);
+            } else if (x > 3 && mCurrentPage > 0) {
+                snapToPage(mCurrentPage - 1);
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int i) {
+
+        }
+    };
+
     /**
      * Used to inflate the Workspace from XML.
      *
@@ -315,6 +338,9 @@ public class Workspace extends PagedView
      */
     public Workspace(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+
+
+        mSensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
 
         mOutlineHelper = HolographicOutlineHelper.obtain(context);
 
@@ -426,6 +452,11 @@ public class Workspace extends PagedView
 
     @Override
     public void onDragEnd() {
+        try {
+            mSensorManager.unregisterListener(mSensorEventListener);
+        } catch (IllegalArgumentException e){
+            //Ignore
+        }
         if (ENFORCE_DRAG_EVENT_ORDER) {
             enfoceDragParity("onDragEnd", 0, 0);
         }
@@ -2310,6 +2341,10 @@ public class Workspace extends PagedView
 
     public void beginDragShared(View child, Point relativeTouchPos, DragSource source,
             boolean accessible) {
+
+        Sensor sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mSensorManager.registerListener(mSensorEventListener, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+
         child.clearFocus();
         child.setPressed(false);
 

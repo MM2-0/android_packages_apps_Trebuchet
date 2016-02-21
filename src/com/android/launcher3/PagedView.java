@@ -631,25 +631,12 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
     private void applyPageTransition(int x) {
         View page = getPageAt(mCurrentPage);
         float position = -(x - (page.getWidth() + mPageSpacing) * mCurrentPage) * 1.f / (page.getWidth() + mPageSpacing);
-        page.setRotationY(-(position * 20));
-        page.setTranslationX(position * page.getWidth() * -0.1f);
-        page.setRotationY(-(position * 20));
-        page.setTranslationX(position * page.getWidth() * -0.1f);
-        if (position < 0) {
-            page.setScaleY(1 + (position * 0.5f));
-            page.setScaleX(1 + (position * 0.5f));
-            int color = (int) (1 - position * 100.0);
-            page.setBackgroundColor(0x00FFFFFF | (color << 24));
+        if (Math.abs(position) > 1) {
+            page.setRotationY(0f);
+            page.setScaleX(0.8f);
+            page.setScaleY(0.8f);
+            page.setBackgroundColor(0);
         } else {
-            page.setScaleY(1 - (position * 0.5f));
-            page.setScaleX(1 - (position * 0.5f));
-            int color = (int) ((position) * 100.0);
-            page.setBackgroundColor(0x00FFFFFF | (color << 24));
-
-        }
-        position = position - 1;
-        if (mCurrentPage > 0) {
-            page = getPageAt(mCurrentPage - 1);
             page.setRotationY(-(position * 20));
             page.setTranslationX(position * page.getWidth() * -0.1f);
             if (position < 0) {
@@ -662,25 +649,57 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
                 page.setScaleX(1 - (position * 0.5f));
                 int color = (int) ((position) * 100.0);
                 page.setBackgroundColor(0x00FFFFFF | (color << 24));
+
+            }
+        }
+        position = position - 1;
+        if (mCurrentPage > 0) {
+            page = getPageAt(mCurrentPage - 1);
+            if (Math.abs(position) > 1) {
+                page.setRotationY(0f);
+                page.setScaleX(0.8f);
+                page.setScaleY(0.8f);
+                page.setBackgroundColor(0);
+            } else {
+                page.setRotationY(-(position * 20));
+                page.setTranslationX(position * page.getWidth() * -0.1f);
+                if (position < 0) {
+                    page.setScaleY(1 + (position * 0.5f));
+                    page.setScaleX(1 + (position * 0.5f));
+                    int color = (int) (1 - position * 100.0);
+                    page.setBackgroundColor(0x00FFFFFF | (color << 24));
+                } else {
+                    page.setScaleY(1 - (position * 0.5f));
+                    page.setScaleX(1 - (position * 0.5f));
+                    int color = (int) ((position) * 100.0);
+                    page.setBackgroundColor(0x00FFFFFF | (color << 24));
+
+                }
             }
         }
         position = position + 2;
         if (mCurrentPage < getPageCount() - 1) {
             page = getPageAt(mCurrentPage + 1);
-            page.setRotationY(-(position * 20));
-            page.setTranslationX(position * page.getWidth() * -0.1f);
-            page.setRotationY(-(position * 20));
-            page.setTranslationX(position * page.getWidth() * -0.1f);
-            if (position < 0) {
-                page.setScaleY(1 + (position * 0.5f));
-                page.setScaleX(1 + (position * 0.5f));
-                int color = (int) (1 - position * 100.0);
-                page.setBackgroundColor(0x00FFFFFF | (color << 24));
+            if (Math.abs(position) > 1) {
+                page.setRotationY(0f);
+                page.setScaleX(0.8f);
+                page.setScaleY(0.8f);
+                page.setBackgroundColor(0);
             } else {
-                page.setScaleY(1 - (position * 0.5f));
-                page.setScaleX(1 - (position * 0.5f));
-                int color = (int) ((position) * 100.0);
-                page.setBackgroundColor(0x00FFFFFF | (color << 24));
+                page.setRotationY(-(position * 20));
+                page.setTranslationX(position * page.getWidth() * -0.1f);
+                if (position < 0) {
+                    page.setScaleY(1 + (position * 0.5f));
+                    page.setScaleX(1 + (position * 0.5f));
+                    int color = (int) (1 - position * 100.0);
+                    page.setBackgroundColor(0x00FFFFFF | (color << 24));
+                } else {
+                    page.setScaleY(1 - (position * 0.5f));
+                    page.setScaleX(1 - (position * 0.5f));
+                    int color = (int) ((position) * 100.0);
+                    page.setBackgroundColor(0x00FFFFFF | (color << 24));
+
+                }
             }
 
         }
