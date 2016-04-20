@@ -547,23 +547,29 @@ public class LauncherProvider extends ContentProvider {
 
             // Database was just created, so wipe any previous widgets
             if (mAppWidgetHost != null) {
-                mAppWidgetHost.deleteHost();
+                try {
+                    mAppWidgetHost.deleteHost();
+                    /**
+                     * Send notification that we've deleted the {@link AppWidgetHost},
+                     * probably as part of the initial database creation. The receiver may
+                     * want to re-call {@link AppWidgetHost#startListening()} to ensure
+                     * callbacks are correctly set.
+                     */
+                    new MainThreadExecutor().execute(new Runnable() {
 
-                /**
-                 * Send notification that we've deleted the {@link AppWidgetHost},
-                 * probably as part of the initial database creation. The receiver may
-                 * want to re-call {@link AppWidgetHost#startListening()} to ensure
-                 * callbacks are correctly set.
-                 */
-                new MainThreadExecutor().execute(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        if (mListener != null) {
-                            mListener.onAppWidgetHostReset();
+                        @Override
+                        public void run() {
+                            if (mListener != null) {
+                                mListener.onAppWidgetHostReset();
+                            }
                         }
-                    }
-                });
+                    });
+                } catch (NullPointerException ex) {
+                    // nothing to do here. Why did this pass the null check? I don't know. but this fixes it.
+                    // (avoids: Caused by: java.lang.NullPointerException: Attempt to invoke interface method
+                    // 'void com.android.internal.appwidget.IAppWidgetService.deleteHost(java.lang.String, int)'
+                    // on a null object reference
+                }
             }
 
             // Fresh and clean launcher DB.
@@ -778,6 +784,12 @@ public class LauncherProvider extends ContentProvider {
                     migrateLauncherFavorite(db, "org.cyanogenmod.snap", "com.android.camera2",
                             "com.android.camera.CameraLauncher",
                             "com.android.camera.CameraLauncher");
+                    migrateLauncherFavorite(db, "org.cyanogenmod.gello.browser", "com.android.browser",
+                            "com.android.browser.BrowserActivity",
+                            "com.android.browser.BrowserActivity");
+                    migrateLauncherFavorite(db, "com.android.browser", "org.cyanogenmod.gello.browser",
+                            "com.android.browser.BrowserActivity",
+                            "com.android.browser.BrowserActivity");
                 }
                 case 28: {
                     if (!ensureSubTypeColumn(db)) {
