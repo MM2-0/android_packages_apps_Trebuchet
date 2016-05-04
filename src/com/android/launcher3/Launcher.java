@@ -1213,7 +1213,7 @@ public class Launcher extends Activity
         Fragment gridFragment = getFragmentManager().findFragmentByTag(
                 DynamicGridSizeFragment.DYNAMIC_GRID_SIZE_FRAGMENT);
         if (gridFragment != null) {
-            mDynamicGridSizeFragment.setSize();
+            ((DynamicGridSizeFragment) gridFragment).setSize();
             unlockScreenOrientation(true);
         }
     }
@@ -1926,6 +1926,8 @@ public class Launcher extends Activity
      * @param size The new grid size to set the workspace to.
      */
     public void setDynamicGridSize(InvariantDeviceProfile.GridSize size) {
+        if (size == null) return;
+
         int gridSize = SettingsProvider.getIntCustomDefault(this,
                 SettingsProvider.SETTINGS_UI_DYNAMIC_GRID_SIZE, 0);
         boolean customValuesChanged = false;
@@ -2813,7 +2815,7 @@ public class Launcher extends Activity
             Fragment gridFragment = getFragmentManager().findFragmentByTag(
                     DynamicGridSizeFragment.DYNAMIC_GRID_SIZE_FRAGMENT);
             if (gridFragment != null) {
-                mDynamicGridSizeFragment.setSize();
+                ((DynamicGridSizeFragment) gridFragment).setSize();
                 unlockScreenOrientation(true);
             }
             else {
