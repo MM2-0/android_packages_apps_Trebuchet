@@ -34,6 +34,7 @@ import android.content.pm.ProviderInfo;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
@@ -1833,13 +1834,54 @@ public class LauncherModel extends BroadcastReceiver
             // Check if any workspace icons overlap with each other
             for (int x = item.cellX; x < (item.cellX+item.spanX); x++) {
                 for (int y = item.cellY; y < (item.cellY+item.spanY); y++) {
-                    if (!shouldResizeAndUpdateDB && screens[x][y] != null) {
-                        Log.e(TAG, "Error loading shortcut " + item
-                            + " into cell (" + containerIndex + "-" + item.screenId + ":"
-                            + x + "," + y
-                            + ") occupied by "
-                            + screens[x][y]);
-                        return false;
+                    if (screens[x][y] != null) {
+                        if (!shouldResizeAndUpdateDB) {
+                            Log.e(TAG, "Error loading shortcut " + item
+                                    + " into cell (" + containerIndex + "-" + item.screenId + ":"
+                                    + x + "," + y
+                                    + ") occupied by "
+                                    + screens[x][y]);
+                            return false;
+                        }
+                        ItemInfo occupiedItem = screens[x][y];
+                        // If an item is overlapping another because one of them
+                        // was moved due to the size of the grid changing,
+                        // move the current item to a free spot past this one.
+                        if (occupiedItem.wasMovedDueToReducedSpace
+                                || item.wasMovedDueToReducedSpace) {
+                            // overlapping icon exists here
+                            // we must find a free space.
+                            boolean freeFound = false;
+                            int nextX = 0;
+                            int nextY = 0;
+                            while (!freeFound) {
+                                if (screens[nextX][nextY] == null) {
+                                    item.cellX = nextX;
+                                    item.cellY = nextY;
+                                    freeFound = true;
+                                } else {
+                                    if (nextX + item.spanX == countX) {
+                                        if (nextY + item.spanY == countY) {
+                                            // If we've reached the bottom of the page and are still
+                                            // searching, add a new page to place this item.
+                                            item.screenId += 1;
+                                            nextY = 0;
+                                            nextX = 0;
+                                            if (!occupied.containsKey(item.screenId)) {
+                                                ItemInfo[][] items = new ItemInfo[countX][countY];
+                                                occupied.put(item.screenId, items);
+                                            }
+                                            screens = occupied.get(item.screenId);
+                                        } else {
+                                            nextX = 0;
+                                            nextY++;
+                                        }
+                                    } else {
+                                        nextX++;
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -2451,13 +2493,43 @@ public class LauncherModel extends BroadcastReceiver
                 for (FolderInfo folder : sBgFolders) {
                     Collections.sort(folder.contents, Folder.ITEM_POS_COMPARATOR);
                     int pos = 0;
+                    int needIndexing = 0;
                     for (ShortcutInfo info : folder.contents) {
-                        if (info.usingLowResIcon) {
+                        if (info.usingLowResIcon && pos < FolderIcon.NUM_ITEMS_IN_PREVIEW) {
                             info.updateIcon(mIconCache, false);
                         }
                         pos ++;
-                        if (pos >= FolderIcon.NUM_ITEMS_IN_PREVIEW) {
-                            break;
+                        needIndexing += info.screenId + info.cellX + info.cellY;
+                    }
+                    // If all screenId, cellX, and cellY are 0, then we assume they were all null.
+                    if (needIndexing == 0) {
+                        synchronized (sBgLock) {
+                            int curX = 0;
+                            int curY = 0;
+                            int folderScreenId = 0;
+                            int folderCount = folder.contents.size();
+                            Point point = Utilities
+                                    .caluclateFolderContentDimensions(folderCount, countX, countY);
+                            int maxX = point.x;
+                            int maxY = point.y;
+                            for (ShortcutInfo info : folder.contents) {
+                                ItemInfo itemInfo = sBgItemsIdMap.get(info.id);
+                                if (curY == maxY) { // New screen
+                                    curX = 0;
+                                    curY = 0;
+                                    folderScreenId++;
+                                }
+                                itemInfo.screenId = folderScreenId;
+                                itemInfo.cellX = curX;
+                                itemInfo.cellY = curY;
+                                LauncherModel.updateItemInDatabase(context, itemInfo);
+                                if (curX == maxX - 1) {
+                                    curX = 0;
+                                    curY++;
+                                } else {
+                                    curX++;
+                                }
+                            }
                         }
                     }
                 }
