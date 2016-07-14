@@ -47,6 +47,8 @@
   <string name="icon_labels_hide">Скрывать</string>
   <!-- Protected apps -->
   <string name="protected_app_settings">Заблокированные приложения</string>
+  <!-- Developer settings -->
+  <string name="export_workspace_layout">Экспорт раскладки</string>
   <!-- Drawer settings -->
   <string name="app_drawer_style">Стиль меню</string>
   <string name="app_drawer_style_compact">Компактный</string>
@@ -56,11 +58,13 @@
   <string name="app_drawer_color_light">Светлый</string>
   <string name="fast_scroller">Быстрая прокрутка</string>
   <string name="fast_scroller_type">Тип быстрой прокрутки</string>
-  <string name="fast_scroller_type_horizontal">Горизонтально</string>
-  <string name="fast_scroller_type_vertical">Вертикальное</string>
+  <string name="fast_scroller_type_horizontal">Горизонтальная</string>
+  <string name="fast_scroller_type_vertical">Вертикальная</string>
   <!-- Search Manager doesn't exist -->
   <string name="search_activity_not_found">Невозможно запустить приложение поиска!</string>
   <!-- App not available toast text -->
   <string name="app_not_available">Приложение недоступно</string>
   <string name="storage_permission_denied">Невозможно получить доступ к хранилищу</string>
+  <string name="export_db_email_subject">БД домашнего экрана</string>
+  <string name="export_db_could_not">Не удалось экспортировать базу данных</string>
 </resources>
