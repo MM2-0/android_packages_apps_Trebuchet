@@ -4650,7 +4650,17 @@ public class Workspace extends PagedView
         mHideIconLabels = SettingsProvider.getBoolean(mLauncher,
                 SettingsProvider.SETTINGS_UI_HOMESCREEN_HIDE_ICON_LABELS,
                 R.bool.preferences_interface_homescreen_hide_icon_labels_default);
-
+        if (SettingsProvider.getBoolean(mLauncher,
+                SettingsProvider.SETTINGS_UI_DARK_STATUS_BAR_ICONS,
+                R.bool.preferences_interface_dark_status_bar_icons)) {
+            int flags = getSystemUiVisibility();
+            flags = flags | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            setSystemUiVisibility(flags);
+        } else {
+            int flags = getSystemUiVisibility();
+            flags = flags & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            setSystemUiVisibility(flags);
+        }
         setScrollingWallpaper();
     }
 

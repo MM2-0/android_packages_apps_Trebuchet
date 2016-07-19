@@ -1,0 +1,5 @@
+<resources>
+    <string name="status_bar_icons">Statusleisten-Symbole</string>
+    <string name="status_bar_icons_dark">Dunkel</string>
+    <string name="status_bar_icons_light">Hell</string>
+</resources>

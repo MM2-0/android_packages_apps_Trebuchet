@@ -1,0 +1,5 @@
+<resources>
+    <string name="status_bar_icons">Status bar icons</string>
+    <string name="status_bar_icons_dark">dark</string>
+    <string name="status_bar_icons_light">light</string>
+</resources>

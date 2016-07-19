@@ -128,6 +128,14 @@ public class SettingsPinnedHeaderAdapter extends PinnedHeaderListAdapter {
                         break;
                     case 5:
                         current = SettingsProvider.getBoolean(mContext,
+                                SettingsProvider.SETTINGS_UI_DARK_STATUS_BAR_ICONS,
+                                R.bool.preferences_interface_dark_status_bar_icons);
+                        state = current ? res.getString(R.string.status_bar_icons_dark)
+                                : res.getString(R.string.status_bar_icons_light);
+                        setStateText(stateView, settingSwitch, state);
+                        break;
+                    case 6:
+                        current = SettingsProvider.getBoolean(mContext,
                                 SettingsProvider.SETTINGS_UI_HOMESCREEN_REMOTE_FOLDER,
                                 R.bool.preferences_interface_homescreen_remote_folder_default);
                         setSettingSwitch(stateView, settingSwitch, current);
@@ -177,14 +185,14 @@ public class SettingsPinnedHeaderAdapter extends PinnedHeaderListAdapter {
                         break;
                     case 5:
                         current = SettingsProvider.getBoolean(mContext,
-                                SettingsProvider.SETTINGS_UI_DRAWER_SEARCH,
-                                R.bool.preferences_interface_drawer_search_default);
+                                SettingsProvider.SETTINGS_UI_DRAWER_REMOTE_APPS,
+                                R.bool.preferences_interface_drawer_remote_apps_default);
                         setSettingSwitch(stateView, settingSwitch, current);
                         break;
                     case 6:
                         current = SettingsProvider.getBoolean(mContext,
-                                SettingsProvider.SETTINGS_UI_DRAWER_REMOTE_APPS,
-                                R.bool.preferences_interface_drawer_remote_apps_default);
+                                SettingsProvider.SETTINGS_UI_DRAWER_SEARCH,
+                                R.bool.preferences_interface_drawer_search_default);
                         setSettingSwitch(stateView, settingSwitch, current);
                         break;
                     default:
@@ -296,6 +304,14 @@ public class SettingsPinnedHeaderAdapter extends PinnedHeaderListAdapter {
 
                             break;
                         case 5:
+                            onTextSettingsBooleanChanged(v,
+                                    SettingsProvider.SETTINGS_UI_DARK_STATUS_BAR_ICONS,
+                                    R.bool.preferences_interface_dark_status_bar_icons,
+                                    R.string.status_bar_icons_dark,
+                                    R.string.status_bar_icons_light);
+                            mLauncher.reloadLauncher(false, false);
+                            break;
+                        case 6:
                             onSettingsBooleanChanged(v,
                                     SettingsProvider.SETTINGS_UI_HOMESCREEN_REMOTE_FOLDER,
                                     R.bool.preferences_interface_homescreen_remote_folder_default,
